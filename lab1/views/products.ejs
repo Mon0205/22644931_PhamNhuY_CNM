@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Product List</title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+</head>
+<body>
+<div style="display: flex; justify-content: space-between; align-items: center;">
+    <h2>Welcome, <%= user.username %></h2>
+    <a href="/logout">Logout</a>
+</div>
+
+<h3>Add Product</h3>
+<form action="/add" method="post">
+    Name: <input name="name" required>
+    Price: <input name="price" required>
+    Quantity: <input name="quantity" required>
+    <button>Add</button>
+</form>
+
+<h3>Product List</h3>
+<table border="1" cellpadding="5">
+    <tr>
+        <th>ID</th><th>Name</th><th>Price</th><th>Quantity</th><th>Actions</th>
+    </tr>
+    <% products.forEach(p => { %>
+        <tr>
+            <td><%= p.id %></td>
+            <td><%= p.name %></td>
+            <td><%= p.price %></td>
+            <td><%= p.quantity %></td>
+            <td>
+                <a href="/edit/<%= p.id %>">Edit</a> |
+                <a href="/delete/<%= p.id %>" onclick="return confirm('Are you sure?')">Delete</a>
+            </td>
+        </tr>
+    <% }) %>
+</table>
+</body>
+</html>

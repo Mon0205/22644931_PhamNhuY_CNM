@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+    <component name="dataSourceStorageLocal" created-in="IU-243.22562.218">
+        <data-source name="@localhost" uuid="a785a61e-90ce-4ee3-ab86-d03ccc32bc69">
+            <database-info product="MySQL" version="11.8.3-MariaDB" jdbc-version="4.2" driver-name="MySQL Connector/J" driver-version="mysql-connector-j-9.5.0 (Revision: a7b3c94f50efbddb9f0dd69b3e0d1aaa25305cd6)" dbms="MARIADB" exact-version="11.8.3" exact-driver-version="9.5">
+                <extra-name-characters>$</extra-name-characters>
+                <identifier-quote-string>`</identifier-quote-string>
+            </database-info>
+            <case-sensitivity plain-identifiers="lower" quoted-identifiers="lower" />
+            <secret-storage>master_key</secret-storage>
+            <user-name>root</user-name>
+            <schema-mapping>
+                <introspection-scope>
+                    <node kind="schema" qname="@" />
+                </introspection-scope>
+            </schema-mapping>
+        </data-source>
+        <data-source name="shopdb@localhost" uuid="7593f66f-d975-4893-95b2-b848615f2c55">
+            <database-info product="MySQL" version="8.0.44" jdbc-version="4.2" driver-name="MySQL Connector/J" driver-version="mysql-connector-j-9.5.0 (Revision: a7b3c94f50efbddb9f0dd69b3e0d1aaa25305cd6)" dbms="MYSQL" exact-version="8.0.44" exact-driver-version="9.5">
+                <extra-name-characters>$</extra-name-characters>
+                <identifier-quote-string>`</identifier-quote-string>
+            </database-info>
+            <case-sensitivity plain-identifiers="exact" quoted-identifiers="exact" />
+            <secret-storage>master_key</secret-storage>
+            <user-name>root</user-name>
+            <schema-mapping>
+                <introspection-scope>
+                    <node kind="schema" qname="@" />
+                </introspection-scope>
+            </schema-mapping>
+        </data-source>
+    </component>
+</project>
