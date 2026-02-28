@@ -1,0 +1,22 @@
+[
+  {
+    "id": "PROD_001",
+    "name": "Laptop Dell XPS 13",
+    "price": 1200,
+    "quantity": 10,
+    "categoryId": "CAT01",
+    "url_image": "https://link-anh.com/1.jpg",
+    "isDeleted": false,
+    "createdAt": "2026-01-29T10:00:00Z"
+  },
+  {
+    "id": "PROD_002",
+    "name": "iPhone 15 Pro",
+    "price": 999,
+    "quantity": 20,
+    "categoryId": "CAT02",
+    "url_image": "https://link-anh.com/2.jpg",
+    "isDeleted": false,
+    "createdAt": "2026-01-29T10:05:00Z"
+  }
+]

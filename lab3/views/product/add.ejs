@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thêm sản phẩm mới</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; line-height: 1.6; }
+        .form-group { margin-bottom: 15px; }
+        label { font-weight: bold; display: block; margin-bottom: 5px; }
+        input[type="text"], input[type="number"], select {
+            width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;
+        }
+        button { background-color: #28a745; color: white; padding: 10px 15px; border: none; cursor: pointer; border-radius: 4px; }
+        button:hover { background-color: #218838; }
+        .back-link { display: inline-block; margin-top: 15px; text-decoration: none; color: #007bff; }
+    </style>
+</head>
+<body>
+    <h1>🚀 Thêm sản phẩm mới</h1>
+
+   <form action="/products/add" method="POST" enctype="multipart/form-data">
+        <div class="form-group">
+            <label for="name">Tên sản phẩm</label>
+            <input type="text" id="name" name="name" placeholder="VD: Laptop Dell XPS" required>
+        </div>
+
+        <div class="form-group">
+            <label for="categoryId">Danh mục (Loại)</label>
+            <select id="categoryId" name="categoryId" required>
+                <option value="">-- Chọn danh mục --</option>
+                <% categories.forEach(cat => { %>
+                    <option value="<%= cat.categoryId %>"><%= cat.name %></option>
+                <% }) %>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="price">Giá sản phẩm (USD)</label>
+            <input type="number" id="price" name="price" min="0" required>
+        </div>
+
+        <div class="form-group">
+            <label for="quantity">Số lượng tồn kho</label>
+            <input type="number" id="quantity" name="quantity" min="0" required>
+        </div>
+
+        <div class="form-group">
+            <label for="image">Hình ảnh sản phẩm</label>
+            <input type="file" id="image" name="image" accept="image/*" required>
+        </div>
+
+        <br>
+        <button type="submit">➕ Thêm vào hệ thống</button>
+   </form>
+
+    <a href="/products" class="back-link">⬅ Quay lại danh sách sản phẩm</a>
+</body>
+</html>

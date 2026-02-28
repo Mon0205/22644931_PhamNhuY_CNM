@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản Lý Sản Phẩm</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <style>
+        .product-img {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body class="bg-light">
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="bi bi-box-seam me-2"></i>TMA Store
+            </a>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="/">Trang chủ</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="/products">Sản phẩm</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/categories">Danh mục</a></li>
+                    <% if (locals.user && user.role === 'staff') { %>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/cart">
+                                <i class="bi bi-cart"></i> Giỏ hàng
+                                <% if (cartCount > 0) { %>
+                                    <span class="badge bg-danger rounded-pill"><%= cartCount %></span>
+                                <% } %>
+                            </a>
+                        </li>
+                     <% } %>
+                    <% if (locals.user) { %>
+
+                        <li class="nav-item"><span class="nav-link text-warning">Hi, <%= user.username %> (<%= user.role %>)</span></li>
+                        <li class="nav-item"><a class="nav-link" href="/auth/logout">Logout</a></li>
+                    <% } %>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container my-5">
+
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2 class="fw-bold text-primary">📦 Kho Sản Phẩm</h2>
+
+            <% if (locals.user && user.role === 'admin') { %>
+                <a href="/products/add" class="btn btn-success shadow-sm">
+                    <i class="bi bi-plus-lg"></i> Thêm Mới
+                </a>
+            <% } %>
+        </div>
+
+        <div class="card mb-4 bg-light border-0 shadow-sm">
+            <div class="card-body">
+                <form action="/products" method="GET" class="row g-3">
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold small">Tên sản phẩm</label>
+                        <input type="text" name="name" class="form-control"
+                               placeholder="Nhập tên..." value="<%= query.name || '' %>">
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold small">Danh mục</label>
+                        <select name="categoryId" class="form-select">
+                            <option value="">-- Tất cả --</option>
+                            <% categories.forEach(cat => { %>
+                                <option value="<%= cat.categoryId %>"
+                                    <%= query.categoryId === cat.categoryId ? 'selected' : '' %>>
+                                    <%= cat.name %>
+                                </option>
+                            <% }) %>
+                        </select>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold small">Khoảng giá ($)</label>
+                        <div class="input-group">
+                            <input type="number" name="minPrice" class="form-control" placeholder="Min" value="<%= query.minPrice %>">
+                            <span class="input-group-text">-</span>
+                            <input type="number" name="maxPrice" class="form-control" placeholder="Max" value="<%= query.maxPrice %>">
+                        </div>
+                    </div>
+
+                    <div class="col-md-2 d-flex align-items-end">
+                        <button type="submit" class="btn btn-primary w-100 me-2">
+                            <i class="bi bi-search"></i> Lọc
+                        </button>
+                        <a href="/products" class="btn btn-outline-secondary" title="Reset">
+                            <i class="bi bi-arrow-counterclockwise"></i>
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover table-striped align-middle mb-0">
+                        <thead class="table-dark text-nowrap">
+                            <tr>
+                                <th class="ps-4">Hình ảnh</th>
+                                <th>Tên sản phẩm</th>
+                                <th>Danh mục</th>
+                                <th>Giá bán</th>
+                                <th class="text-center">Tồn kho</th>
+
+                                <th class="text-center">Hành động</th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% if (products.length > 0) { %>
+                                <% products.forEach(p => { %>
+                                    <tr>
+                                        <td class="ps-4">
+                                            <img src="<%= p.url_image %>"
+                                                 alt="<%= p.name %>"
+                                                 class="product-img shadow-sm"
+                                                 onerror="this.src='https://via.placeholder.com/60?text=No+Img'">
+                                        </td>
+                                        <td>
+                                            <span class="fw-bold text-dark"><%= p.name %></span>
+                                        </td>
+                                        <td>
+                                            <% if (p.categoryName) { %>
+                                                <span class="badge bg-info text-dark"><%= p.categoryName %></span>
+                                            <% } else { %>
+                                                <span class="text-muted small">--</span>
+                                            <% } %>
+                                        </td>
+                                        <td class="fw-bold text-success">
+                                            $<%= Number(p.price).toLocaleString() %>
+                                        </td>
+                                        <td class="text-center">
+                                            <% if (p.quantity > 5) { %>
+                                                <span class="badge bg-success rounded-pill">Còn hàng: <%= p.quantity %></span>
+                                            <% } else if (p.quantity > 0) { %>
+                                                <span class="badge bg-warning text-dark rounded-pill">Sắp hết: <%= p.quantity %></span>
+                                            <% } else { %>
+                                                <span class="badge bg-danger rounded-pill">Hết hàng</span>
+                                            <% } %>
+                                        </td>
+                                          <% if (locals.user && user.role === 'staff') { %>
+                                              <td class="text-center">
+                                                    <a href="/cart/add/<%= p.id %>" class="btn btn-sm btn-outline-success">
+                                                      <i class="bi bi-cart-plus"></i> Chọn mua
+                                                  </a>
+                                              </td>
+                                           <% } %>
+
+                                        <% if (locals.user && user.role === 'admin') { %>
+                                            <td class="text-center">
+                                                <div class="btn-group" role="group">
+                                                    <a href="/products/edit/<%= p.id %>" class="btn btn-sm btn-outline-primary me-2 rounded" title="Sửa">
+                                                        <i class="bi bi-pencil-square"></i>
+                                                    </a>
+                                                    <a href="/products/delete/<%= p.id %>"
+                                                       class="btn btn-sm btn-outline-danger rounded"
+                                                       onclick="return confirm('Bạn có chắc muốn xóa: <%= p.name %>?')"
+                                                       title="Xóa">
+                                                        <i class="bi bi-trash"></i>
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        <% } %>
+
+                                    </tr>
+                                <% }) %>
+                            <% } else { %>
+                                <tr>
+                                    <td colspan="<%= (locals.user && user.role === 'admin') ? 6 : 5 %>" class="text-center py-5 text-muted">
+                                        <i class="bi bi-inbox display-4"></i>
+                                        <p class="mt-2">Không tìm thấy sản phẩm nào!</p>
+                                    </td>
+                                </tr>
+                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <% if (pagination.totalPages > 1) { %>
+            <nav class="mt-4">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item <%= pagination.page <= 1 ? 'disabled' : '' %>">
+                        <a class="page-link" href="<%= createPaginationLink(pagination.page - 1) %>">Trước</a>
+                    </li>
+                    <% for(let i = 1; i <= pagination.totalPages; i++) { %>
+                        <li class="page-item <%= pagination.page === i ? 'active' : '' %>">
+                            <a class="page-link" href="<%= createPaginationLink(i) %>"><%= i %></a>
+                        </li>
+                    <% } %>
+                    <li class="page-item <%= pagination.page >= pagination.totalPages ? 'disabled' : '' %>">
+                        <a class="page-link" href="<%= createPaginationLink(pagination.page + 1) %>">Sau</a>
+                    </li>
+                </ul>
+            </nav>
+        <% } %>
+
+    </main>
+
+    <%
+        function createPaginationLink(page) {
+            let params = new URLSearchParams(query);
+            params.set('page', page);
+            return "/products?" + params.toString();
+        }
+    %>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

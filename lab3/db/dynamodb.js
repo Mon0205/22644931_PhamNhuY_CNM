@@ -5,4 +5,5 @@ const client = new DynamoDBClient({
     region: process.env.AWS_REGION
 });
 
-export default DynamoDBDocumentClient.from(client);
+const dynamoDB = DynamoDBDocumentClient.from(client);
+export default dynamoDB;

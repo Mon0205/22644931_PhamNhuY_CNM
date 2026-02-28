@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Lịch sử thao tác</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+</head>
+<body class="bg-light">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="/">TMA Store</a>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="/products">Sản phẩm</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="/logs">Lịch sử</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container my-5">
+        <h2 class="mb-4 fw-bold text-primary">📜 Nhật Ký Hoạt Động (Audit Logs)</h2>
+
+        <div class="card shadow border-0">
+            <div class="card-body p-0">
+                <table class="table table-striped table-hover align-middle mb-0">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Thời gian</th>
+                            <th>Người thực hiện</th>
+                            <th>Hành động</th>
+                            <th>Sản phẩm (ID/Tên)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% if (logs && logs.length > 0) { %>
+                            <% logs.forEach(log => { %>
+                                <tr>
+                                    <td><%= log.formattedTime %></td>
+                                    <td>
+                                        <span class="fw-bold"><%= log.username %></span>
+                                    </td>
+                                    <td>
+                                        <% if (log.action === 'CREATE') { %>
+                                            <span class="badge bg-success">Thêm mới</span>
+                                        <% } else if (log.action === 'UPDATE') { %>
+                                            <span class="badge bg-primary">Cập nhật</span>
+                                         <% } else if (log.action === 'ORDER') { %>
+                                            <span class="badge bg-black">Mua</span>
+                                        <% } else { %>
+                                            <span class="badge bg-danger">Xóa</span>
+                                        <% } %>
+                                    </td>
+                                    <td class="text-muted"><%= log.productName %></td>
+                                </tr>
+                            <% }) %>
+                        <% } else { %>
+                            <tr><td colspan="4" class="text-center py-4">Chưa có lịch sử nào.</td></tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản Lý Danh Mục</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+</head>
+<body class="bg-light">
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="bi bi-box-seam me-2"></i>TMA Store
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="/">Trang chủ</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/products">Sản phẩm</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="/categories">Danh mục</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container my-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="fw-bold text-primary">📂 Danh sách danh mục</h2>
+            <a href="/categories/add" class="btn btn-success">
+                <i class="bi bi-plus-lg me-1"></i>Thêm danh mục mới
+            </a>
+        </div>
+
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover table-striped align-middle mb-0">
+                        <thead class="table-dark">
+                            <tr>
+                                <th class="ps-4">Mã (ID)</th>
+                                <th>Tên danh mục</th>
+                                <th>Mô tả</th>
+                                <th class="text-center">Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% if (categories && categories.length > 0) { %>
+                                <% categories.forEach(cat => { %>
+                                    <tr>
+                                        <td class="ps-4 fw-bold text-secondary"><%= cat.categoryId %></td>
+                                        <td>
+                                            <span class="badge bg-info text-dark"><%= cat.name %></span>
+                                        </td>
+                                        <td class="text-muted">
+                                            <%= cat.description || "Không có mô tả" %>
+                                        </td>
+                                        <td class="text-center">
+                                            <a href="/categories/edit/<%= cat.categoryId %>" class="btn btn-sm btn-outline-primary me-1" title="Sửa">
+                                                <i class="bi bi-pencil-square"></i>
+                                            </a>
+                                            <a href="/categories/delete/<%= cat.categoryId %>"
+                                               class="btn btn-sm btn-outline-danger"
+                                               onclick="return confirm('CẢNH BÁO: Bạn có chắc muốn xóa danh mục này?\n\nLƯU Ý: Các sản phẩm thuộc danh mục này sẽ KHÔNG bị xóa nhưng sẽ chuyển sang trạng thái Chưa phân loại.')"
+                                               title="Xóa">
+                                                <i class="bi bi-trash"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                <% }) %>
+                            <% } else { %>
+                                <tr>
+                                    <td colspan="4" class="text-center py-5 text-muted">
+                                        <i class="bi bi-folder-x display-4"></i>
+                                        <p class="mt-2">Chưa có danh mục nào được tạo.</p>
+                                    </td>
+                                </tr>
+                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chỉnh sửa sản phẩm</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 30px; background-color: #f4f7f6; }
+        .container { background: #fff; padding: 25px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); max-width: 600px; margin: auto; }
+        h1 { color: #333; text-align: center; }
+        .form-group { margin-bottom: 15px; }
+        label { font-weight: bold; display: block; margin-bottom: 5px; color: #555; }
+        input[type="text"], input[type="number"], select {
+            width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box;
+        }
+        .img-preview { margin: 10px 0; border: 1px solid #eee; padding: 5px; border-radius: 4px; }
+        button {
+            background-color: #007bff; color: white; padding: 12px 20px;
+            border: none; cursor: pointer; border-radius: 4px; width: 100%; font-size: 16px;
+        }
+        button:hover { background-color: #0056b3; }
+        .btn-back { display: block; text-align: center; margin-top: 15px; text-decoration: none; color: #666; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>📝 Chỉnh sửa sản phẩm</h1>
+
+    <form action="/products/edit/<%= product.id %>" method="POST">
+
+        <div class="form-group">
+            <label for="name">Tên sản phẩm</label>
+            <input type="text" id="name" name="name" value="<%= product.name %>" required>
+        </div>
+
+        <div class="form-group">
+            <label for="categoryId">Danh mục (Loại)</label>
+            <select id="categoryId" name="categoryId" required>
+                <option value="">-- Chọn danh mục --</option>
+                <% categories.forEach(cat => { %>
+                    <option value="<%= cat.categoryId %>" <%= product.categoryId === cat.categoryId ? 'selected' : '' %>>
+                        <%= cat.name %>
+                    </option>
+                <% }) %>
+                <option value="uncategorized" <%= product.categoryId === 'uncategorized' ? 'selected' : '' %>>Khác / Chưa phân loại</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="price">Giá sản phẩm (USD)</label>
+            <input type="number" id="price" name="price" value="<%= product.price %>" step="0.01" min="0" required>
+        </div>
+
+        <div class="form-group">
+            <label for="quantity">Số lượng tồn kho</label>
+            <input type="number" id="quantity" name="quantity" value="<%= product.quantity %>" min="0" required>
+        </div>
+
+        <div class="form-group">
+            <label>Hình ảnh hiện tại</label>
+            <div class="img-preview">
+                <% if (product.url_image) { %>
+                    <img src="<%= product.url_image %>" alt="Hình sản phẩm" width="100%">
+                <% } else { %>
+                    <p style="color: #999; text-align: center;">Chưa có hình ảnh</p>
+                <% } %>
+            </div>
+            <small style="color: #ef4444;">* Để thay đổi ảnh, vui lòng xóa sản phẩm và tạo mới.</small>
+        </div>
+
+        <button type="submit">💾 Lưu thay đổi</button>
+    </form>
+
+    <a href="/products" class="btn-back">⬅ Quay lại danh sách</a>
+</div>
+
+</body>
+</html>

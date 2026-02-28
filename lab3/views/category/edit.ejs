@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chỉnh sửa loại</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; line-height: 1.6; }
+        .form-group { margin-bottom: 15px; }
+        label { font-weight: bold; display: block; margin-bottom: 5px; }
+        input[type="text"] {
+            width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;
+        }
+        button { background-color: #007bff; color: white; padding: 10px 15px; border: none; cursor: pointer; border-radius: 4px; }
+        button:hover { background-color: #0056b3; }
+        .back-link { display: inline-block; margin-top: 15px; text-decoration: none; color: #007bff; }
+    </style>
+</head>
+<body>
+    <h1>📝 Chỉnh sửa loại</h1>
+
+    <form action="/categories/edit/<%= category.categoryId %>" method="POST">
+
+        <div class="form-group">
+            <label for="name">Tên loại</label>
+            <input type="text" id="name" name="name"
+                   value="<%= category.name %>" required>
+        </div>
+
+        <div class="form-group">
+            <label for="description">Mô tả</label>
+            <input type="text" id="description" name="description"
+                   value="<%= category.description %>" required>
+        </div>
+
+        <br>
+        <button type="submit">💾 Cập nhật</button>
+    </form>
+
+    <a href="/categories" class="back-link">⬅ Quay lại danh sách</a>
+</body>
+</html>

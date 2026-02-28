@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng ký tài khoản</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+</head>
+<body class="bg-light d-flex justify-content-center align-items-center" style="height: 100vh;">
+
+    <div class="card shadow p-4 border-0" style="width: 400px;">
+        <div class="text-center mb-4">
+            <h3 class="fw-bold text-primary">📝 Đăng Ký</h3>
+            <p class="text-muted small">Tạo tài khoản mới cho hệ thống</p>
+        </div>
+
+        <% if (locals.error) { %>
+            <div class="alert alert-danger py-2"><%= error %></div>
+        <% } %>
+
+        <form action="/auth/register" method="POST">
+            <div class="mb-3">
+                <label for="username" class="form-label fw-bold">Tên đăng nhập</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-person"></i></span>
+                    <input type="text" id="username" name="username" class="form-control" placeholder="Nhập username..." required>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="password" class="form-label fw-bold">Mật khẩu</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                    <input type="password" id="password" name="password" class="form-control" placeholder="Nhập mật khẩu..." required>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="role" class="form-label fw-bold">Vai trò (Role)</label>
+                <select class="form-select" id="role" name="role">
+                    <option value="staff" selected>Nhân viên (Staff) - Chỉ xem</option>
+                    <option value="admin">Quản trị viên (Admin) - Toàn quyền</option>
+                </select>
+                <div class="form-text text-muted small">
+                    * Chọn Admin để test chức năng Thêm/Sửa/Xóa.
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100 py-2 fw-bold shadow-sm">
+                <i class="bi bi-person-plus-fill me-1"></i> Đăng Ký Ngay
+            </button>
+        </form>
+
+        <hr class="my-4">
+
+        <div class="text-center">
+            <span class="text-muted">Đã có tài khoản?</span>
+            <a href="/auth/login" class="text-decoration-none fw-bold ms-1">Đăng nhập tại đây</a>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

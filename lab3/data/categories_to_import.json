@@ -1,0 +1,17 @@
+[
+  {
+    "categoryId": "CAT00",
+    "name": "Uncategorized",
+    "description": "Uncategorized"
+  },
+  {
+    "categoryId": "CAT01",
+    "name": "Laptop & Linh kiện",
+    "description": "Bao gồm các loại máy tính xách tay, linh kiện phần cứng và phụ kiện máy tính chuyên dụng."
+  },
+  {
+    "categoryId": "CAT02",
+    "name": "Điện thoại & Máy tính bảng",
+    "description": "Các dòng smartphone, máy tính bảng và thiết bị di động thông minh mới nhất."
+  }
+]
