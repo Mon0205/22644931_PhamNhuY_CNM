@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Ticket List</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+
+<h2>🎫 Event Ticket List</h2>
+
+<a href="/create">Add</a>
+
+<form method="GET" action="/">
+  <input 
+    type="text" 
+    name="keyword" 
+    placeholder="Tìm kiếm"
+    value="<%= keyword || '' %>"
+  />
+  <button type="submit">Search</button>
+</form>
+
+
+
+<table border="1" cellpadding="8">
+    <tr>
+        <th>ID</th>
+        <th>name</th>
+        <th>type</th>
+        <th>capacity</th>
+        <th>status</th>
+        <th>img</th>
+        <th>Price</th>
+        <th>create</th>
+        
+    </tr>
+
+    <% rooms.forEach(t => { %>
+        <tr>
+            <td><%= t.roomId %></td>
+            <td><%= t.roomName %></td>
+            <td><%= t.roomType %></td>
+            <td><%= t.capacity %></td>
+            <td><%= t.status %></td>
+            <td>
+                <!-- <% if(t.imgUrl){ %> -->
+                    <img src="<%= t.imgUrl %>" width="80">
+                <!-- <% } else { %>
+                    No image
+                <% } %> -->
+            </td>
+            <td><%= t.price %></td>
+            <td><%= t.createAt %></td>
+            <td>
+                ❗ <!-- FIX QUAN TRỌNG -->
+                <a href="/detail/<%= t.roomId %>">Detail</a> |
+                <a href="/edit/<%= t.roomId %>">Edit</a> |
+                <a href="/delete/<%= t.roomId %>" onclick="return confirm('Delete this ticket?')">Delete</a>
+            </td>
+        </tr>
+    <% }) %>
+
+</table>
+
+</body>
+</html>

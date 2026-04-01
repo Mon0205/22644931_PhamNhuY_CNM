@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Edit</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<h2>Edit</h2>
+
+<form action="/edit/<%= ticket.ticketId %>" method="POST" enctype="multipart/form-data">
+
+  <label>Event Name:</label><br>
+  <input type="text" name="eventName" value="<%= ticket.eventName %>" required><br><br>
+
+  <label>Holder Name:</label><br>
+  <input type="text" name="holderName" value="<%= ticket.holderName %>" required><br><br>
+
+  <label>Category:</label><br>
+  <select name="category">
+    <option value="Standard" <%= ticket.category === 'Standard' ? 'selected' : '' %>>Standard</option>
+    <option value="VIP" <%= ticket.category === 'VIP' ? 'selected' : '' %>>VIP</option>
+    <option value="VVIP" <%= ticket.category === 'VVIP' ? 'selected' : '' %>>VVIP</option>
+  </select><br><br>
+
+  <label>Quantity:</label><br>
+  <input type="number" name="quantity" value="<%= ticket.quantity %>" required><br><br>
+
+  <label>Price:</label><br>
+  <input type="number" name="pricePerTicket" value="<%= ticket.pricePerTicket %>" required><br><br>
+
+  <% if(ticket.imgUrl){ %>
+    <label>Current Image:</label><br>
+    <img src="<%= ticket.imgUrl %>" width="200"><br><br>
+  <% } %>
+
+  <label>Change Image:</label><br>
+  <input type="file" name="image"><br><br>
+
+  <button type="submit">Update</button>
+</form>
+
+<br>
+<a href="/">⬅ Back</a>
+
+</body>
+</html>

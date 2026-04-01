@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>List</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+
+<h2>List</h2>
+
+<a href="/create">Add</a>
+
+<form method="GET" action="/">
+  <input 
+    type="text" 
+    name="keyword" 
+    placeholder="Tìm theo tên sự kiện hoặc người giữ vé"
+    value="<%= keyword || '' %>"
+  />
+  <button type="submit">Search</button>
+</form>
+
+
+
+<table border="1" cellpadding="8">
+    <tr>
+        <th>ID</th>
+        <th>Event</th>
+        <th>Holder</th>
+        <th>Category</th>
+        <th>Quantity</th>
+        <th>Price</th>
+        <th>Total</th>
+        <th>Final</th>
+        <th>Status</th>
+        <th>Date</th>
+        <th>Image</th>
+        <th>Discount</th>
+        <th>Action</th>
+    </tr>
+
+    <% tickets.forEach(t => { %>
+        <tr>
+            <td><%= t.ticketId %></td>
+            <td><%= t.eventName %></td>
+            <td><%= t.holderName %></td>
+            <td><%= t.category %></td>
+            <td><%= t.quantity %></td>
+            <td><%= t.pricePerTicket %></td>
+            <td><%= t.totalAmount %></td>
+            <td><%= t.finalAmount %></td>
+            <td><%= t.status %></td>
+            <td><%= t.eventDate %></td>
+
+            <td>
+                <!-- <% if(t.imgUrl){ %> -->
+                    <img src="<%= t.imgUrl %>" width="80">
+                <!-- <% } else { %>
+                    No image
+                <% } %> -->
+            </td>
+
+            <td>
+                <% if(t.finalAmount < t.totalAmount){ %>
+                    <span style="color:green;">✔ Discount</span>
+                <% } else { %>
+                    <span style="color:red;">❌ No</span>
+                <% } %>
+            </td>
+
+            <td>
+                ❗ <!-- FIX QUAN TRỌNG -->
+                <a href="/detail/<%= t.ticketId %>">Detail</a> |
+                <a href="/edit/<%= t.ticketId %>">Edit</a> |
+                <a href="/delete/<%= t.ticketId %>" onclick="return confirm('Delete this selection?')">Delete</a>
+            </td>
+        </tr>
+    <% }) %>
+
+</table>
+
+</body>
+</html>

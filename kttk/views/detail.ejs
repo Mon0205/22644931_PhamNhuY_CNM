@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Detail</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<h2>Detail</h2>
+
+<p><b>Event:</b> <%= ticket.eventName %></p>
+<p><b>Holder:</b> <%= ticket.holderName %></p>
+<p><b>Category:</b> <%= ticket.category %></p>
+<p><b>Quantity:</b> <%= ticket.quantity %></p>
+<p><b>Price:</b> <%= ticket.pricePerTicket %></p>
+<p><b>Total:</b> <%= ticket.totalAmount %></p>
+<p><b>Final:</b> <%= ticket.finalAmount %></p>
+<p><b>Status:</b> <%= ticket.status %></p>
+<p><b>Date:</b> <%= ticket.eventDate %></p>
+
+<p>
+  <b>Discount:</b>
+  <% if(ticket.finalAmount < ticket.totalAmount){ %>
+    <span style="color: green">Được giảm giá</span>
+  <% } else { %>
+    <span style="color: red">Không giảm giá</span>
+  <% } %>
+</p>
+
+<% if(ticket.imgUrl){ %>
+  <img src="<%= ticket.imgUrl %>" width="300">
+<% } %>
+
+<br><br>
+
+<a href="/edit/<%= ticket.ticketId %>">Edit</a>
+<a href="/delete/<%= ticket.ticketId %>">Delete</a>
+
+<br><br>
+<a href="/">⬅ Back</a>
+
+</body>
+</html>

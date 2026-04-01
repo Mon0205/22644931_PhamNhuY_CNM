@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Add</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<h2>Add</h2>
+
+<form action="/create" method="POST" enctype="multipart/form-data">
+
+  <label>room name:</label><br>
+  <input type="text" name="roomName" required><br><br>
+
+  <label>type</label><br>
+  <input type="text" name="roomType" required><br><br>
+
+  <label>status:</label><br>
+  <select name="status" required>
+    <option value="Available">Available</option>
+    <option value="Book">Book</option>
+  </select><br><br>
+
+  <label>capacity:</label><br>
+  <input type="number" name="capacity" required><br><br>
+  
+
+  <label>Price</label><br>
+  <input type="number" name="price" required><br><br>
+
+  <label>Date:</label><br>
+  <input type="date" name="createAt" required><br><br>
+
+  <label>Image:</label><br>
+  <input type="file" name="image" accept="image/*"><br><br>
+
+  <button type="submit">Create</button>
+</form>
+
+<br>
+<a href="/">⬅ Back</a>
+
+</body>
+</html>

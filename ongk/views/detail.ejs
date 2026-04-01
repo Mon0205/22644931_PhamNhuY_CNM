@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Detail</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<h2>Detail</h2>
+
+<p><b>Name:</b> <%= room.roomName %></p>
+<p><b>Type:</b> <%= room.roomType %></p>
+<p><b>Capacity:</b> <%= room.capacity %></p>
+<p><b>Status:</b> <%= room.status %></p>
+<p><b>Price:</b> <%= room.price %></p>
+<p><b>Create At:</b> <%= room.createAt %></p>
+
+<% if(room.imgUrl){ %>
+  <img src="<%= room.imgUrl %>" width="300">
+<% } %>
+
+</body>
+</html>

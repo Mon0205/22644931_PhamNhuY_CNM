@@ -1,0 +1,538 @@
+//npm i aws-sdk ejs express body-parser dotenv multer multer-s3@2.10.0
+
+//model
+
+const { dynamo } = require("../config/aws");
+const TABLE = "EventTickets";
+
+exports.getAll = async () => {
+  const data = await dynamo.scan({ TableName: TABLE }).promise();
+  return data.Items;
+};
+
+exports.getByticketId = async (id) => {
+  const data = await dynamo
+    .get({
+      TableName: TABLE,
+      Key: { ticketId: id },
+    })
+    .promise();
+  return data.Item;
+};
+
+exports.search = async (keyword) => {
+  const params = {
+    TableName: TABLE,
+    FilterExpression: "contains(eventName, :kw) OR contains(holderName, :kw)",
+    ExpressionAttributeValues: {
+      ":kw": keyword
+    }
+  };
+
+  const data = await dynamo.scan(params).promise();
+  return data.Items;
+};
+
+
+exports.create = async (item) => {
+  await dynamo
+    .put({
+      TableName: TABLE,
+      Item: item,
+    })
+    .promise();
+};
+
+exports.update = async (id, data) => {
+  let updateExp = `
+    set eventName=:e,
+        holderName=:h,
+        category=:c,
+        quantity=:q,
+        pricePerTicket=:p,
+        totalAmount=:t,
+        finalAmount=:f
+  `;
+
+  let attrValues = {
+    ":e": data.eventName,
+    ":h": data.holderName,
+    ":c": data.category,
+    ":q": data.quantity,
+    ":p": data.pricePerTicket,
+    ":t": data.totalAmount,
+    ":f": data.finalAmount,
+  };
+
+  if (data.imgUrl) {
+    updateExp += ", imgUrl=:img";
+    attrValues[":img"] = data.imgUrl;
+  }
+
+  await dynamo
+    .update({
+      TableName: TABLE,
+      Key: { ticketId: id },
+      UpdateExpression: updateExp,
+      ExpressionAttributeValues: attrValues,
+    })
+    .promise();
+};
+
+exports.delete = async (id) => {
+  await dynamo
+    .delete({
+      TableName: TABLE,
+      Key: { ticketId: id },
+    })
+    .promise();
+};
+
+//controller
+
+const crypto = require("crypto");
+const model = require("../model/ticketModel");
+const { s3 } = require("../config/aws");
+const { log } = require("console");
+
+// LIST + SEARCH
+exports.index = async (req, res) => {
+  const tickets = await model.getAll();
+  res.render("index", { tickets });
+};
+
+exports.index = async (req, res) => {
+  const keyword = req.query.keyword;
+
+  let tickets;
+
+  if (keyword) {
+    tickets = await model.search(keyword);
+  } else {
+    tickets = await model.getAll();
+  }
+
+  res.render("index", { tickets, keyword });
+};
+
+
+// FORM CREATE
+exports.createForm = (req, res) => {
+  res.render("add");
+};
+
+// CREATE
+exports.create = async (req, res) => {
+    const {
+      eventName,
+      holderName,
+      category,
+      quantity,
+      pricePerTicket,
+      eventDate,
+      status,
+    } = req.body;
+
+    // VALIDATION
+    if (quantity <= 0 || pricePerTicket <= 0) throw "Invalid number";
+
+    if (new Date(eventDate) < new Date()) throw "Invalid date";
+
+    const validCategory = ["Standard", "VIP", "VVIP"];
+    if (!validCategory.includes(category)) throw "Invalid category";
+
+    // IMAGE từ multer-s3
+    const imgUrl = req.file ? req.file.location : "";
+
+    // BUSINESS
+    const totalAmount = quantity * pricePerTicket;
+    let finalAmount = totalAmount;
+
+    if (category === "VIP" && quantity >= 4) finalAmount *= 0.9;
+
+    if (category === "VVIP" && quantity >= 2) finalAmount *= 0.85;
+
+    await model.create({
+      ticketId: crypto.randomUUID(),
+      eventName,
+      holderName,
+      category,
+      quantity: Number(quantity),
+      pricePerTicket: Number(pricePerTicket),
+      eventDate,
+      status,
+      imgUrl,
+      totalAmount,
+      finalAmount,
+      createdAt: new Date().toISOString(),
+    });
+
+    res.redirect("/");
+};
+
+// DETAIL
+exports.detail = async (req, res) => {
+  const ticket = await model.getByticketId(req.params.ticketId);
+  res.render("detail", { ticket });
+};
+
+// DELETE
+exports.delete = async (req, res) => {
+  const ticketId = req.params.ticketId;
+
+  const ticket = await model.getByticketId(ticketId);
+
+  if (ticket && ticket.imgUrl) {
+    try {
+      const key = ticket.imgUrl.split("/").pop();
+
+      await s3
+        .deleteObject({
+          Bucket: process.env.BUCKET,
+          Key: key,
+        })
+        .promise();
+
+      console.log("Deleted image:", key);
+    } catch (err) {
+      console.log("S3 delete error:", err);
+    }
+  }
+
+  await model.delete(ticketId);
+
+  res.redirect("/");
+};
+
+// EDIT FORM
+exports.editForm = async (req, res) => {
+  const ticket = await model.getByticketId(req.params.ticketId);
+  res.render("edit", { ticket });
+};
+
+// UPDATE
+exports.update = async (req, res) => {
+  const id = req.params.ticketId;
+
+  const { eventName, holderName, category, quantity, pricePerTicket } = req.body;
+
+  const qty = Number(quantity);
+  const price = Number(pricePerTicket);
+
+  // tính toán
+  const totalAmount = qty * price;
+  let finalAmount = totalAmount;
+
+  if (category === "VIP" && qty >= 4) finalAmount *= 0.9;
+  if (category === "VVIP" && qty >= 2) finalAmount *= 0.85;
+
+  const updateData = {
+    eventName,
+    holderName,
+    category,
+    quantity: qty,
+    pricePerTicket: price,
+    totalAmount,
+    finalAmount,
+  };
+
+  // nếu có upload ảnh mới thì update
+  if (req.file) {
+    updateData.imgUrl = req.file.location;
+  }
+
+  await model.update(id, updateData);
+  
+  res.redirect("/");
+};
+
+
+//route
+
+const express = require("express");
+const router = express.Router();
+const controller = require("../controller/ticketControler");
+
+const multer = require("multer");
+const multerS3 = require("multer-s3");
+const { s3 } = require("../config/aws");
+
+const upload = multer({
+  storage: multerS3({
+    s3: s3,
+    bucket: process.env.BUCKET,
+    contentType: multerS3.AUTO_CONTENT_TYPE,
+    key: (req, file, cb) => {
+      cb(null, Date.now() + "-" + file.originalname);
+    }
+  })
+});
+
+router.get("/", controller.index);
+router.get("/create", controller.createForm);
+router.post("/create", upload.single("image"), controller.create);
+
+router.get("/detail/:ticketId", controller.detail);
+
+router.get("/edit/:ticketId", controller.editForm);
+router.post("/edit/:ticketId", upload.single("image"), controller.update);
+
+router.get("/delete/:ticketId", controller.delete);
+
+module.exports = router;
+
+//app
+
+require("dotenv").config();
+const express = require("express")
+const bodyParser = require("body-parser");
+const app = express();
+app.set("view engine", "ejs");
+app.use(bodyParser.urlencoded({extended:true}))
+app.use(express.static("public"));
+const routes = require("./route/roomRouter")
+app.use("/",routes);
+app.listen(3000,()=>{
+    console.log("http://localhost:3000");
+})
+
+//index
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>List</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+
+<h2>List</h2>
+
+<a href="/create">Add</a>
+
+<form method="GET" action="/">
+  <input 
+    type="text" 
+    name="keyword" 
+    placeholder="Tìm theo tên sự kiện hoặc người giữ vé"
+    value="<%= keyword || '' %>"
+  />
+  <button type="submit">Search</button>
+</form>
+
+
+
+<table border="1" cellpadding="8">
+    <tr>
+        <th>ID</th>
+        <th>Event</th>
+        <th>Holder</th>
+        <th>Category</th>
+        <th>Quantity</th>
+        <th>Price</th>
+        <th>Total</th>
+        <th>Final</th>
+        <th>Status</th>
+        <th>Date</th>
+        <th>Image</th>
+        <th>Discount</th>
+        <th>Action</th>
+    </tr>
+
+    <% tickets.forEach(t => { %>
+        <tr>
+            <td><%= t.ticketId %></td>
+            <td><%= t.eventName %></td>
+            <td><%= t.holderName %></td>
+            <td><%= t.category %></td>
+            <td><%= t.quantity %></td>
+            <td><%= t.pricePerTicket %></td>
+            <td><%= t.totalAmount %></td>
+            <td><%= t.finalAmount %></td>
+            <td><%= t.status %></td>
+            <td><%= t.eventDate %></td>
+
+            <td>
+                <!-- <% if(t.imgUrl){ %> -->
+                    <img src="<%= t.imgUrl %>" width="80">
+                <!-- <% } else { %>
+                    No image
+                <% } %> -->
+            </td>
+
+            <td>
+                <% if(t.finalAmount < t.totalAmount){ %>
+                    <span style="color:green;">✔ Discount</span>
+                <% } else { %>
+                    <span style="color:red;">❌ No</span>
+                <% } %>
+            </td>
+
+            <td>
+                ❗ <!-- FIX QUAN TRỌNG -->
+                <a href="/detail/<%= t.ticketId %>">Detail</a> |
+                <a href="/edit/<%= t.ticketId %>">Edit</a> |
+                <a href="/delete/<%= t.ticketId %>" onclick="return confirm('Delete this selection?')">Delete</a>
+            </td>
+        </tr>
+    <% }) %>
+
+</table>
+
+</body>
+</html>
+
+//detail
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Detail</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<h2>Detail</h2>
+
+<p><b>Event:</b> <%= ticket.eventName %></p>
+<p><b>Holder:</b> <%= ticket.holderName %></p>
+<p><b>Category:</b> <%= ticket.category %></p>
+<p><b>Quantity:</b> <%= ticket.quantity %></p>
+<p><b>Price:</b> <%= ticket.pricePerTicket %></p>
+<p><b>Total:</b> <%= ticket.totalAmount %></p>
+<p><b>Final:</b> <%= ticket.finalAmount %></p>
+<p><b>Status:</b> <%= ticket.status %></p>
+<p><b>Date:</b> <%= ticket.eventDate %></p>
+
+<p>
+  <b>Discount:</b>
+  <% if(ticket.finalAmount < ticket.totalAmount){ %>
+    <span style="color: green">Được giảm giá</span>
+  <% } else { %>
+    <span style="color: red">Không giảm giá</span>
+  <% } %>
+</p>
+
+<% if(ticket.imgUrl){ %>
+  <img src="<%= ticket.imgUrl %>" width="300">
+<% } %>
+
+<br><br>
+
+<a href="/edit/<%= ticket.ticketId %>">Edit</a>
+<a href="/delete/<%= ticket.ticketId %>">Delete</a>
+
+<br><br>
+<a href="/">⬅ Back</a>
+
+</body>
+</html>
+
+//add
+
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Add</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<h2>Add</h2>
+
+<form action="/create" method="POST" enctype="multipart/form-data">
+
+  <label>Event Name:</label><br>
+  <input type="text" name="eventName" required><br><br>
+
+  <label>Holder Name:</label><br>
+  <input type="text" name="holderName" required><br><br>
+
+  <label>Category:</label><br>
+  <select name="category" required>
+    <option value="Standard">Standard</option>
+    <option value="VIP">VIP</option>
+    <option value="VVIP">VVIP</option>
+  </select><br><br>
+
+  <label>Quantity:</label><br>
+  <input type="number" name="quantity" min="1" required><br><br>
+
+  <label>Price per Ticket:</label><br>
+  <input type="number" name="pricePerTicket" min="1" required><br><br>
+
+  <label>Event Date:</label><br>
+  <input type="date" name="eventDate" required><br><br>
+
+  <label>Status:</label><br>
+  <select name="status">
+    <option value="Upcoming">Upcoming</option>
+    <option value="Sold">Sold</option>
+    <option value="Cancelled">Cancelled</option>
+  </select><br><br>
+
+  <label>Image:</label><br>
+  <input type="file" name="image" accept="image/*"><br><br>
+
+  <button type="submit">Create</button>
+</form>
+
+<br>
+<a href="/">⬅ Back</a>
+
+</body>
+</html>
+
+//edit
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Edit</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<h2>Edit</h2>
+
+<form action="/edit/<%= ticket.ticketId %>" method="POST" enctype="multipart/form-data">
+
+  <label>Event Name:</label><br>
+  <input type="text" name="eventName" value="<%= ticket.eventName %>" required><br><br>
+
+  <label>Holder Name:</label><br>
+  <input type="text" name="holderName" value="<%= ticket.holderName %>" required><br><br>
+
+  <label>Category:</label><br>
+  <select name="category">
+    <option value="Standard" <%= ticket.category === 'Standard' ? 'selected' : '' %>>Standard</option>
+    <option value="VIP" <%= ticket.category === 'VIP' ? 'selected' : '' %>>VIP</option>
+    <option value="VVIP" <%= ticket.category === 'VVIP' ? 'selected' : '' %>>VVIP</option>
+  </select><br><br>
+
+  <label>Quantity:</label><br>
+  <input type="number" name="quantity" value="<%= ticket.quantity %>" required><br><br>
+
+  <label>Price:</label><br>
+  <input type="number" name="pricePerTicket" value="<%= ticket.pricePerTicket %>" required><br><br>
+
+  <% if(ticket.imgUrl){ %>
+    <label>Current Image:</label><br>
+    <img src="<%= ticket.imgUrl %>" width="200"><br><br>
+  <% } %>
+
+  <label>Change Image:</label><br>
+  <input type="file" name="image"><br><br>
+
+  <button type="submit">Update</button>
+</form>
+
+<br>
+<a href="/">⬅ Back</a>
+
+</body>
+</html>
+
