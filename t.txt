@@ -298,241 +298,240 @@ app.listen(3000,()=>{
 
 //index
 
-<!DOCTYPE html>
-<html lang="en">
+// <!DOCTYPE html>
+// <html lang="en">
 
-<head>
-    <meta charset="UTF-8">
-    <title>List</title>
-    <link rel="stylesheet" href="/style.css">
-</head>
+// <head>
+//     <meta charset="UTF-8">
+//     <title>List</title>
+//     <link rel="stylesheet" href="/style.css">
+// </head>
 
-<body>
+// <body>
 
-<h2>List</h2>
+// <h2>List</h2>
 
-<a href="/create">Add</a>
+// <a href="/create">Add</a>
 
-<form method="GET" action="/">
-  <input 
-    type="text" 
-    name="keyword" 
-    placeholder="Tìm theo tên sự kiện hoặc người giữ vé"
-    value="<%= keyword || '' %>"
-  />
-  <button type="submit">Search</button>
-</form>
-
-
-
-<table border="1" cellpadding="8">
-    <tr>
-        <th>ID</th>
-        <th>Event</th>
-        <th>Holder</th>
-        <th>Category</th>
-        <th>Quantity</th>
-        <th>Price</th>
-        <th>Total</th>
-        <th>Final</th>
-        <th>Status</th>
-        <th>Date</th>
-        <th>Image</th>
-        <th>Discount</th>
-        <th>Action</th>
-    </tr>
-
-    <% tickets.forEach(t => { %>
-        <tr>
-            <td><%= t.ticketId %></td>
-            <td><%= t.eventName %></td>
-            <td><%= t.holderName %></td>
-            <td><%= t.category %></td>
-            <td><%= t.quantity %></td>
-            <td><%= t.pricePerTicket %></td>
-            <td><%= t.totalAmount %></td>
-            <td><%= t.finalAmount %></td>
-            <td><%= t.status %></td>
-            <td><%= t.eventDate %></td>
-
-            <td>
-                <!-- <% if(t.imgUrl){ %> -->
-                    <img src="<%= t.imgUrl %>" width="80">
-                <!-- <% } else { %>
-                    No image
-                <% } %> -->
-            </td>
-
-            <td>
-                <% if(t.finalAmount < t.totalAmount){ %>
-                    <span style="color:green;">✔ Discount</span>
-                <% } else { %>
-                    <span style="color:red;">❌ No</span>
-                <% } %>
-            </td>
-
-            <td>
-                ❗ <!-- FIX QUAN TRỌNG -->
-                <a href="/detail/<%= t.ticketId %>">Detail</a> |
-                <a href="/edit/<%= t.ticketId %>">Edit</a> |
-                <a href="/delete/<%= t.ticketId %>" onclick="return confirm('Delete this selection?')">Delete</a>
-            </td>
-        </tr>
-    <% }) %>
-
-</table>
-
-</body>
-</html>
-
-//detail
-
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Detail</title>
-  <link rel="stylesheet" href="/style.css">
-</head>
-<body>
-
-<h2>Detail</h2>
-
-<p><b>Event:</b> <%= ticket.eventName %></p>
-<p><b>Holder:</b> <%= ticket.holderName %></p>
-<p><b>Category:</b> <%= ticket.category %></p>
-<p><b>Quantity:</b> <%= ticket.quantity %></p>
-<p><b>Price:</b> <%= ticket.pricePerTicket %></p>
-<p><b>Total:</b> <%= ticket.totalAmount %></p>
-<p><b>Final:</b> <%= ticket.finalAmount %></p>
-<p><b>Status:</b> <%= ticket.status %></p>
-<p><b>Date:</b> <%= ticket.eventDate %></p>
-
-<p>
-  <b>Discount:</b>
-  <% if(ticket.finalAmount < ticket.totalAmount){ %>
-    <span style="color: green">Được giảm giá</span>
-  <% } else { %>
-    <span style="color: red">Không giảm giá</span>
-  <% } %>
-</p>
-
-<% if(ticket.imgUrl){ %>
-  <img src="<%= ticket.imgUrl %>" width="300">
-<% } %>
-
-<br><br>
-
-<a href="/edit/<%= ticket.ticketId %>">Edit</a>
-<a href="/delete/<%= ticket.ticketId %>">Delete</a>
-
-<br><br>
-<a href="/">⬅ Back</a>
-
-</body>
-</html>
-
-//add
+// <form method="GET" action="/">
+//   <input 
+//     type="text" 
+//     name="keyword" 
+//     placeholder="Tìm theo tên sự kiện hoặc người giữ vé"
+//     value="<%= keyword || '' %>"
+//   />
+//   <button type="submit">Search</button>
+// </form>
 
 
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Add</title>
-  <link rel="stylesheet" href="/style.css">
-</head>
-<body>
 
-<h2>Add</h2>
+// <table border="1" cellpadding="8">
+//     <tr>
+//         <th>ID</th>
+//         <th>Event</th>
+//         <th>Holder</th>
+//         <th>Category</th>
+//         <th>Quantity</th>
+//         <th>Price</th>
+//         <th>Total</th>
+//         <th>Final</th>
+//         <th>Status</th>
+//         <th>Date</th>
+//         <th>Image</th>
+//         <th>Discount</th>
+//         <th>Action</th>
+//     </tr>
 
-<form action="/create" method="POST" enctype="multipart/form-data">
+//     <% tickets.forEach(t => { %>
+//         <tr>
+//             <td><%= t.ticketId %></td>
+//             <td><%= t.eventName %></td>
+//             <td><%= t.holderName %></td>
+//             <td><%= t.category %></td>
+//             <td><%= t.quantity %></td>
+//             <td><%= t.pricePerTicket %></td>
+//             <td><%= t.totalAmount %></td>
+//             <td><%= t.finalAmount %></td>
+//             <td><%= t.status %></td>
+//             <td><%= t.eventDate %></td>
 
-  <label>Event Name:</label><br>
-  <input type="text" name="eventName" required><br><br>
+//             <td>
+//                 <!-- <% if(t.imgUrl){ %> -->
+//                     <img src="<%= t.imgUrl %>" width="80">
+//                 <!-- <% } else { %>
+//                     No image
+//                 <% } %> -->
+//             </td>
 
-  <label>Holder Name:</label><br>
-  <input type="text" name="holderName" required><br><br>
+//             <td>
+//                 <% if(t.finalAmount < t.totalAmount){ %>
+//                     <span style="color:green;">✔ Discount</span>
+//                 <% } else { %>
+//                     <span style="color:red;">❌ No</span>
+//                 <% } %>
+//             </td>
 
-  <label>Category:</label><br>
-  <select name="category" required>
-    <option value="Standard">Standard</option>
-    <option value="VIP">VIP</option>
-    <option value="VVIP">VVIP</option>
-  </select><br><br>
+//             <td>
+//                 ❗ <!-- FIX QUAN TRỌNG -->
+//                 <a href="/detail/<%= t.ticketId %>">Detail</a> |
+//                 <a href="/edit/<%= t.ticketId %>">Edit</a> |
+//                 <a href="/delete/<%= t.ticketId %>" onclick="return confirm('Delete this selection?')">Delete</a>
+//             </td>
+//         </tr>
+//     <% }) %>
 
-  <label>Quantity:</label><br>
-  <input type="number" name="quantity" min="1" required><br><br>
+// </table>
 
-  <label>Price per Ticket:</label><br>
-  <input type="number" name="pricePerTicket" min="1" required><br><br>
+// </body>
+// </html>
 
-  <label>Event Date:</label><br>
-  <input type="date" name="eventDate" required><br><br>
+// //detail
 
-  <label>Status:</label><br>
-  <select name="status">
-    <option value="Upcoming">Upcoming</option>
-    <option value="Sold">Sold</option>
-    <option value="Cancelled">Cancelled</option>
-  </select><br><br>
+// <!DOCTYPE html>
+// <html>
+// <head>
+//   <title>Detail</title>
+//   <link rel="stylesheet" href="/style.css">
+// </head>
+// <body>
 
-  <label>Image:</label><br>
-  <input type="file" name="image" accept="image/*"><br><br>
+// <h2>Detail</h2>
 
-  <button type="submit">Create</button>
-</form>
+// <p><b>Event:</b> <%= ticket.eventName %></p>
+// <p><b>Holder:</b> <%= ticket.holderName %></p>
+// <p><b>Category:</b> <%= ticket.category %></p>
+// <p><b>Quantity:</b> <%= ticket.quantity %></p>
+// <p><b>Price:</b> <%= ticket.pricePerTicket %></p>
+// <p><b>Total:</b> <%= ticket.totalAmount %></p>
+// <p><b>Final:</b> <%= ticket.finalAmount %></p>
+// <p><b>Status:</b> <%= ticket.status %></p>
+// <p><b>Date:</b> <%= ticket.eventDate %></p>
 
-<br>
-<a href="/">⬅ Back</a>
+// <p>
+//   <b>Discount:</b>
+//   <% if(ticket.finalAmount < ticket.totalAmount){ %>
+//     <span style="color: green">Được giảm giá</span>
+//   <% } else { %>
+//     <span style="color: red">Không giảm giá</span>
+//   <% } %>
+// </p>
 
-</body>
-</html>
+// <% if(ticket.imgUrl){ %>
+//   <img src="<%= ticket.imgUrl %>" width="300">
+// <% } %>
 
-//edit
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Edit</title>
-  <link rel="stylesheet" href="/style.css">
-</head>
-<body>
+// <br><br>
 
-<h2>Edit</h2>
+// <a href="/edit/<%= ticket.ticketId %>">Edit</a>
+// <a href="/delete/<%= ticket.ticketId %>">Delete</a>
 
-<form action="/edit/<%= ticket.ticketId %>" method="POST" enctype="multipart/form-data">
+// <br><br>
+// <a href="/">⬅ Back</a>
 
-  <label>Event Name:</label><br>
-  <input type="text" name="eventName" value="<%= ticket.eventName %>" required><br><br>
+// </body>
+// </html>
 
-  <label>Holder Name:</label><br>
-  <input type="text" name="holderName" value="<%= ticket.holderName %>" required><br><br>
+// //add
 
-  <label>Category:</label><br>
-  <select name="category">
-    <option value="Standard" <%= ticket.category === 'Standard' ? 'selected' : '' %>>Standard</option>
-    <option value="VIP" <%= ticket.category === 'VIP' ? 'selected' : '' %>>VIP</option>
-    <option value="VVIP" <%= ticket.category === 'VVIP' ? 'selected' : '' %>>VVIP</option>
-  </select><br><br>
 
-  <label>Quantity:</label><br>
-  <input type="number" name="quantity" value="<%= ticket.quantity %>" required><br><br>
+// <!DOCTYPE html>
+// <html>
+// <head>
+//   <title>Add</title>
+//   <link rel="stylesheet" href="/style.css">
+// </head>
+// <body>
 
-  <label>Price:</label><br>
-  <input type="number" name="pricePerTicket" value="<%= ticket.pricePerTicket %>" required><br><br>
+// <h2>Add</h2>
 
-  <% if(ticket.imgUrl){ %>
-    <label>Current Image:</label><br>
-    <img src="<%= ticket.imgUrl %>" width="200"><br><br>
-  <% } %>
+// <form action="/create" method="POST" enctype="multipart/form-data">
 
-  <label>Change Image:</label><br>
-  <input type="file" name="image"><br><br>
+//   <label>Event Name:</label><br>
+//   <input type="text" name="eventName" required><br><br>
 
-  <button type="submit">Update</button>
-</form>
+//   <label>Holder Name:</label><br>
+//   <input type="text" name="holderName" required><br><br>
 
-<br>
-<a href="/">⬅ Back</a>
+//   <label>Category:</label><br>
+//   <select name="category" required>
+//     <option value="Standard">Standard</option>
+//     <option value="VIP">VIP</option>
+//     <option value="VVIP">VVIP</option>
+//   </select><br><br>
 
-</body>
-</html>
+//   <label>Quantity:</label><br>
+//   <input type="number" name="quantity" min="1" required><br><br>
 
+//   <label>Price per Ticket:</label><br>
+//   <input type="number" name="pricePerTicket" min="1" required><br><br>
+
+//   <label>Event Date:</label><br>
+//   <input type="date" name="eventDate" required><br><br>
+
+//   <label>Status:</label><br>
+//   <select name="status">
+//     <option value="Upcoming">Upcoming</option>
+//     <option value="Sold">Sold</option>
+//     <option value="Cancelled">Cancelled</option>
+//   </select><br><br>
+
+//   <label>Image:</label><br>
+//   <input type="file" name="image" accept="image/*"><br><br>
+
+//   <button type="submit">Create</button>
+// </form>
+
+// <br>
+// <a href="/">⬅ Back</a>
+
+// </body>
+// </html>
+
+// //edit
+// <!DOCTYPE html>
+// <html>
+// <head>
+//   <title>Edit</title>
+//   <link rel="stylesheet" href="/style.css">
+// </head>
+// <body>
+
+// <h2>Edit</h2>
+
+// <form action="/edit/<%= ticket.ticketId %>" method="POST" enctype="multipart/form-data">
+
+//   <label>Event Name:</label><br>
+//   <input type="text" name="eventName" value="<%= ticket.eventName %>" required><br><br>
+
+//   <label>Holder Name:</label><br>
+//   <input type="text" name="holderName" value="<%= ticket.holderName %>" required><br><br>
+
+//   <label>Category:</label><br>
+//   <select name="category">
+//     <option value="Standard" <%= ticket.category === 'Standard' ? 'selected' : '' %>>Standard</option>
+//     <option value="VIP" <%= ticket.category === 'VIP' ? 'selected' : '' %>>VIP</option>
+//     <option value="VVIP" <%= ticket.category === 'VVIP' ? 'selected' : '' %>>VVIP</option>
+//   </select><br><br>
+
+//   <label>Quantity:</label><br>
+//   <input type="number" name="quantity" value="<%= ticket.quantity %>" required><br><br>
+
+//   <label>Price:</label><br>
+//   <input type="number" name="pricePerTicket" value="<%= ticket.pricePerTicket %>" required><br><br>
+
+//   <% if(ticket.imgUrl){ %>
+//     <label>Current Image:</label><br>
+//     <img src="<%= ticket.imgUrl %>" width="200"><br><br>
+//   <% } %>
+
+//   <label>Change Image:</label><br>
+//   <input type="file" name="image"><br><br>
+
+//   <button type="submit">Update</button>
+// </form>
+
+// <br>
+// <a href="/">⬅ Back</a>
+
+// </body>
+// </html>
