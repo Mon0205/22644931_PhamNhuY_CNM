@@ -32,6 +32,20 @@ exports.search = async (keyword) => {
   const data = await dynamo.scan(params).promise();
   return data.Items;
 };
+//search 2
+exports.search = async (keyword) => {
+  const params = {
+    TableName: TABLE,
+    FilterExpression: "contains(roomName, :kw) OR contains(#st, :kw)",
+    ExpressionAttributeValues: { ":kw": keyword },
+    ExpressionAttributeNames: {
+      "#st": "status"   
+    }
+  };
+
+  const data = await dynamo.scan(params).promise();
+  return data.Items;
+};
 
 
 exports.create = async (item) => {
